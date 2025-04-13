@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/shishamchudal/authApp/issues"
   },
-  "homepage": "https://github.com/shishamchudal/authApp#readme"
+  "homepage": "https://github.com/shishamchudal/authApp#readme",
+  "dependencies": {
+    "express": "^5.1.0"
+  }
 }
