@@ -16,3 +16,10 @@ app.use(expressSession);
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => console.log(`App listening on port ${port}`));
+
+// Passport setup
+
+const passport = require('passport');
+
+app.use(passport.initialize());
+app.use(passport.session());
