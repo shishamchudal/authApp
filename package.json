@@ -18,6 +18,7 @@
   "homepage": "https://github.com/shishamchudal/authApp#readme",
   "dependencies": {
     "body-parser": "^2.2.0",
+    "connect-ensure-login": "^0.1.1",
     "express": "^5.1.0",
     "express-session": "^1.18.1",
     "mongoose": "^8.13.2",
