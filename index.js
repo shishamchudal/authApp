@@ -73,6 +73,10 @@ app.get("/login", (req, res) => {
 });
 
 app.get("/", connectEnsureLogin.ensureLoggedIn(), (req, res) => {
+  res.sendFile("html/index.html", { root: __dirname });
+});
+
+app.get("/private", connectEnsureLogin.ensureLoggedIn(), (req, res) => {
   res.sendFile("html/private.html", { root: __dirname });
 });
 
