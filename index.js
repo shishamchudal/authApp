@@ -1,13 +1,13 @@
-const express = require('express');
+const express = require("express");
 const app = express();
 
 app.use(express.static(__dirname));
 
-const bodyParser = require('body-parser');
-const expressSession = require('express-session')({
-    secret: 'secret',
-    resave: false,
-    saveUninitialized: true
+const bodyParser = require("body-parser");
+const expressSession = require("express-session")({
+  secret: "secret",
+  resave: false,
+  saveUninitialized: true,
 });
 
 app.use(bodyParser.json());
@@ -19,29 +19,68 @@ app.listen(port, () => console.log(`App listening on port ${port}`));
 
 // Passport setup
 
-const passport = require('passport');
+const passport = require("passport");
 
 app.use(passport.initialize());
 app.use(passport.session());
 
 // Mongoose setup
-const mongoose = require('mongoose');
-const passportLocalMongoose = require('passport-local-mongoose');
+const mongoose = require("mongoose");
+const passportLocalMongoose = require("passport-local-mongoose");
 
-mongoose.connect('mongodb://localhost:27017/your_database_name', 
-    { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect("mongodb://localhost:27017/your_database_name", {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
 
 const Schema = mongoose.Schema;
 const UserDetail = new Schema({
-    username: String,
-    password: String
+  username: String,
+  password: String,
 });
 
 UserDetail.plugin(passportLocalMongoose);
-const User = mongoose.model('userInfo', UserDetail, 'userInfo');
+const User = mongoose.model("userInfo", UserDetail, "userInfo");
 
 // Passport local authentication
 passport.use(User.createStrategy());
 
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
+
+// Routes
+const connectEnsureLogin = require("connect-ensure-login");
+
+app.post("/login", (req, res, next) => {
+  passport.authenticate("local", (err, user, info) => {
+    if (err) {
+      return next(err);
+    }
+    if (!user) {
+      return res.redirect("/login?info=" + info);
+    }
+    req.logIn(user, (err) => {
+      if (err) {
+        return next(err);
+      }
+      return res.redirect("/");
+    });
+  })(req, res, next);
+});
+
+app.get("/login", (req, res) => {
+  res.sendFile("html/login.html", { root: __dirname });
+});
+
+app.get("/", connectEnsureLogin.ensureLoggedIn(), (req, res) => {
+  res.sendFile("html/private.html", { root: __dirname });
+});
+
+app.get("/user", connectEnsureLogin.ensureLoggedIn(), (req, res) => {
+  res.send({ user: req.user });
+});
+
+app.get("/logout", (req, res) => {
+  req.logout();
+  res.sendFile("html/logout.html", { root: __dirname });
+});
