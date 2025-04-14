@@ -40,13 +40,13 @@ const UserDetail = new Schema({
 });
 
 UserDetail.plugin(passportLocalMongoose);
-const User = mongoose.model("userInfo", UserDetail, "userInfo");
+const UserDetails = mongoose.model("userInfo", UserDetail, "userInfo");
 
 // Passport local authentication
-passport.use(User.createStrategy());
+passport.use(UserDetails.createStrategy());
 
-passport.serializeUser(User.serializeUser());
-passport.deserializeUser(User.deserializeUser());
+passport.serializeUser(UserDetails.serializeUser());
+passport.deserializeUser(UserDetails.deserializeUser());
 
 // Routes
 const connectEnsureLogin = require("connect-ensure-login");
@@ -88,3 +88,8 @@ app.get("/logout", (req, res) => {
   req.logout();
   res.sendFile("html/logout.html", { root: __dirname });
 });
+
+// Register some users
+// UserDetails.register({username:'paul', active: false}, 'paul');
+// UserDetails.register({username:'joy', active: false}, 'joy');
+// UserDetails.register({username:'ray', active: false}, 'ray');
